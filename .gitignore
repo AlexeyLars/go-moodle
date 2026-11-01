@@ -1,0 +1,9 @@
+/bin/
+.env
+.env.*
+!.env.example
+.moodle-env-*
+/output/
+/coverage.out
+*.test
+.DS_Store
