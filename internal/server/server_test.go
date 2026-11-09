@@ -36,7 +36,7 @@ func connect(t *testing.T, token string) (*mcp.ClientSession, *testmoodle.Fixtur
 }
 
 func TestAllToolsOverMCP(t *testing.T) {
-	cs, _ := connect(t, "local-test-token")
+	cs, fixture := connect(t, "local-test-token")
 	cases := []struct {
 		name  string
 		args  map[string]any
@@ -52,6 +52,7 @@ func TestAllToolsOverMCP(t *testing.T) {
 		{"analyze_assignment", map[string]any{"assignid": 101}, false}, {"extract_assignment_requirements", map[string]any{"assignid": 101}, false},
 		{"find_relevant_materials", map[string]any{"assignid": 101}, false}, {"decompose_task", map[string]any{"assignid": 101}, false},
 		{"create_implementation_plan", map[string]any{"assignid": 101}, false},
+		{"read_file", map[string]any{"fileurl": fixture.Server.URL + "/moodle/webservice/pluginfile.php/1/mod_resource/content/1/lecture.txt"}, false},
 	}
 	catalogue, err := cs.ListTools(t.Context(), nil)
 	if err != nil {
@@ -116,6 +117,9 @@ func TestArgumentsAndAuthentication(t *testing.T) {
 		{"get_course_content", map[string]any{}}, {"get_course_content", map[string]any{"courseid": "eleven"}},
 		{"get_course_content", map[string]any{"courseid": -1}}, {"get_grades", map[string]any{"courseid": -1}},
 		{"get_assignments", map[string]any{"courseids": []int{-1}}}, {"get_assignment_status", map[string]any{"assignid": 999}},
+		{"read_file", map[string]any{"fileurl": ""}},
+		{"read_file", map[string]any{"fileurl": "https://example.edu/file", "limit": -1}},
+		{"read_file", map[string]any{"fileurl": "https://example.edu/file", "mode": "invalid"}},
 	} {
 		result, err := cs.CallTool(t.Context(), &mcp.CallToolParams{Name: test.name, Arguments: test.args})
 		if err == nil && !result.IsError {
