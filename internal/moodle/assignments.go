@@ -16,7 +16,7 @@ func (s *Session) Assignments(ctx context.Context, courseIDs []int64) (Items, er
 	for _, course := range list(obj(data)["courses"]) {
 		for _, a := range list(course["assignments"]) {
 			result = append(result, Object{"id": valueOr(a, "id", 0), "name": valueOr(a, "name", ""), "duedate": valueOr(a, "duedate", 0),
-				"cutoffdate": valueOr(a, "cutoffdate", 0), "intro": a["intro"], "courseid": valueOr(course, "id", 0), "coursename": valueOr(course, "fullname", "")})
+				"cutoffdate": valueOr(a, "cutoffdate", 0), "intro": a["intro"], "introattachments": valueOr(a, "introattachments", Items{}), "courseid": valueOr(course, "id", 0), "coursename": valueOr(course, "fullname", "")})
 		}
 	}
 	return result, nil

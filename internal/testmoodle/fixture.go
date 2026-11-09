@@ -42,6 +42,15 @@ func (f *Fixture) serve(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "bad form", 400)
 		return
 	}
+	if r.URL.Path == "/moodle/webservice/pluginfile.php/1/mod_resource/content/1/lecture.txt" {
+		if r.Form.Get("token") != "local-test-token" {
+			http.Error(w, "invalid token", http.StatusForbidden)
+			return
+		}
+		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+		_, _ = w.Write([]byte("Лекция: коллективное принятие решений"))
+		return
+	}
 	if r.URL.Path == "/moodle/login/token.php" {
 		if r.Form.Get("username") != "student" || r.Form.Get("password") != "local-test-password" || r.Form.Get("service") != "moodle_mobile_app" {
 			write(Object{"errorcode": "invalidlogin", "error": "invalid credentials"})
